@@ -19,7 +19,7 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		return true // demo; tighten in production
+		return true
 	},
 }
 
@@ -74,7 +74,6 @@ func (h *WS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Send:     make(chan []byte, 256),
 	}
 
-	// Hub reference set via service internal hub - pass through service
 	h.svc.RegisterClient(client)
 
 	h.svc.SendJoinNotice(ctx, client)

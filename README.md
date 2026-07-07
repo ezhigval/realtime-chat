@@ -5,6 +5,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Tier](https://img.shields.io/badge/tier-middle-5319e7)
 
+**English** · [Русский](README.ru.md)
+
 Room-based WebSocket chat with message history and online presence. Redis Pub/Sub lets multiple server instances share the same rooms.
 
 ## Quick start
