@@ -1,5 +1,10 @@
 # realtime-chat
 
+![Go](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)
+[![CI](https://github.com/ezhigval/realtime-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/ezhigval/realtime-chat/actions/workflows/ci.yml)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Tier](https://img.shields.io/badge/tier-middle-5319e7)
+
 Room-based WebSocket chat with message history and online presence. Redis Pub/Sub lets multiple server instances share the same rooms.
 
 ## Quick start
