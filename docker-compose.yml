@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: chat
+      POSTGRES_PASSWORD: chat
+      POSTGRES_DB: chat
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chat"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6384:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  migrate:
+    image: golang:1.25-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgres://chat:chat@postgres:5432/chat?sslmode=disable
+    command: sh -c "go install github.com/pressly/goose/v3/cmd/goose@latest && goose -dir migrations postgres \"$$DATABASE_URL\" up"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  server1:
+    build: .
+    ports:
+      - "8086:8086"
+    environment:
+      PORT: "8086"
+      INSTANCE_ID: server1
+      DATABASE_URL: postgres://chat:chat@postgres:5432/chat?sslmode=disable
+      REDIS_ADDR: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  server2:
+    build: .
+    ports:
+      - "8087:8086"
+    environment:
+      PORT: "8086"
+      INSTANCE_ID: server2
+      DATABASE_URL: postgres://chat:chat@postgres:5432/chat?sslmode=disable
+      REDIS_ADDR: redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
